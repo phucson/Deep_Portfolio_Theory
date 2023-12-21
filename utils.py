@@ -30,12 +30,15 @@ def load_tickers(tickers, start, end):
     l = []
     # loop through tickers
     for i, tic in enumerate(tickers):
+        print(f'Download ticker: {tic}')
         t = tic.lower()
         globals()[t] = stock_historical_data(tickers[i], 
                                    start,
                                    end, '1D')
         globals()[t]['return'] = globals()[t]['close'].pct_change()
         globals()[t]['time'] = pd.to_datetime(globals()[t]['time'], format="%Y-%m-%d")
+        
+        # print(f'{tic} na values: {globals()[t].isna().sum()}')
     # list of ticker dataframe
     l = [globals()[t.lower()] for t in tickers]
     return l
