@@ -32,28 +32,27 @@ additional = ['DGC', 'KBC', 'KDH', 'VND', 'DPM',
 vn83 = list(set(vn29).union(additional))
 len(vn83)
 
-ind = pd.read_csv(index_file, 
-                  parse_dates=['date'],
-                  index_col='date')
-ind_w = ind.resample("W").mean().ffill()
+ind = pd.read_csv(data_folder+index_file, 
+                  parse_dates=['Date'],
+                  index_col='Date').sort_index(ascending=True)
 
-last_price = pd.read_csv('last_price.csv', 
+ind['Change'] = ind['Price'].diff()
+ind.rename(columns={'Change %':'% Change'})
+ind = ind.rename(columns={'Price':"PX_LAST"}).dropna()
+ind['Change %'] = ind['Change %'].str.replace('%', '').astype('float')
+ind['Change %'] = ind['Change %'].div(100)
+
+last_price = pd.read_csv('./daily_data/last_price.csv', 
                   parse_dates=['date'],
                   index_col='date')
 last_price_w = last_price.resample("W").mean().ffill()
 
 
-net_change = pd.read_csv('net_change.csv', 
-                  parse_dates=['date'],
-                  index_col='date')
-net_change_w = net_change.resample("W").mean().ffill()
+net_change_w = last_price_w.diff().ffill().fillna(0)
 
-pct_change = pd.read_csv('percentage_change.csv', 
-                  parse_dates=['date'],
-                  index_col='date')
-pct_change_w = pct_change.resample("W").mean().ffill()
+pct_change_w = last_price_w.pct_change().ffill().fillna(0)
 
-ind_w.to_csv(data_folder+'vni.csv')
+ind.to_csv(data_folder+'vni.csv')
 last_price_w.to_csv(data_folder+'last_price.csv')
 net_change_w.to_csv(data_folder+'net_change.csv')
-pct_change_w.to_csv(data_folder+'pct_change.csv')
+pct_change_w.to_csv(data_folder+'percentage_change.csv')

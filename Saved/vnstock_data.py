@@ -94,4 +94,4 @@ percentage_change = percentage_change.iloc[1:, :]
 last_price.to_csv('last_price.csv', index=False)
 net_change.to_csv('net_change.csv', index=False)
 percentage_change.to_csv('percentage_change.csv', index=False)
-vni.iloc[1:, :].to_csv('vni.csv', index=False)
+vni.to_csv('vni.csv', index=False)
